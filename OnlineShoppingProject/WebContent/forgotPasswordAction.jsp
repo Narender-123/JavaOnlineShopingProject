@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@page import="project.ConnectionProvider" %>
+<%@page import="java.sql.*" %>
+<%
+String email = request.getParameter("email");
+String mobileNumber = request.getParameter("mobileNumber");
+String securityQuestion = request.getParameter("securityQuestion");
+String answer = request.getParameter("answer");
+String newPassword = request.getParameter("newPassword");
+
+int check = 0;
+try{
+	Connection con = ConnectionProvider.getCon();
+	Statement smt = con.createStatement();
+	ResultSet rs = smt.executeQuery("Select * From Users where email = '"+email+"' and mobileNumber = '"+mobileNumber+"' and securityQuestion = '"+securityQuestion+"' and answer = '"+answer+"'");
+	while(rs.next()){
+		check = 1;
+		smt.executeUpdate("Update Users Set password = '"+newPassword+"' where email = '"+email+"'");
+		response.sendRedirect("forgotPassword.jsp?msg=done");
+	}
+	if(check ==0) response.sendRedirect("forgotPassword.jsp?msg = invald");
+	
+}catch(Exception ae){
+	ae.printStackTrace();
+}
+%>
